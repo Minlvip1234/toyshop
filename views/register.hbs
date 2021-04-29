@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;	
+	font-family: 'Fira sans', sans-serif;
+}
+
+body {
+	background-color: #2F4960;
+	background-image: linear-gradient(to bottom right, #2F4960 10%, #102040);
+}
+
+.app {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+.home {
+	width: 100%;
+	max-width: 400px;
+	padding: 50px 30px;
+	background-color: #ffffff;
+	border-radius: 16px;
+	text-align: center;
+}
+
+form {
+	display: block;
+	width: 100%;
+	max-width: 400px;
+	padding: 50px 30px;
+	background-image: linear-gradient(to bottom, #00BC7E, #108775);
+	box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+	border-radius: 16px;
+}
+
+form h1 {
+	color: #FFF;
+	font-size: 36px;
+	text-transform: uppercase;
+	margin-bottom: 30px;
+}
+
+.err-msg {
+	padding: 10px 15px;
+	background-color: #fff;
+	border-radius: 8px;
+	margin-bottom: 15px;
+	color: red;
+	box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+form .form-group {
+	margin-bottom: 30px;
+}
+
+form label {
+	display: block;
+	color:#eee;
+	font-size: 14px;
+	margin-bottom: 5px;
+}
+
+form input {
+	appearance: none;
+	background: none;
+	outline: none;
+	border: none;
+}
+
+form input:not([type="submit"]) {
+	display: block;
+	width: 100%;
+	padding: 15px;
+	border-radius: 8px;
+	background-color: rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+	transition: 0.4s;
+	color: #222;
+	font-size: 18px;
+	font-weight: 300;
+}
+
+form input:not([type="submit"])::placeholder {
+	color: #CCC;
+}
+
+form input:not([type="submit"]):focus, form input:not([type="submit"]):valid {
+	background-color: #fff;
+	box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+form input[type="submit"] {
+	display: block;
+	width: 100%;
+	padding: 15px;
+	border-radius: 8px;
+	background-color: #2F4960;
+	box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+	transition: 0.4s;
+	color: #FFF;
+	font-size: 20px;
+	font-weight: 700;
+	cursor: pointer;
+}
+</style>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Update information</title>
+     <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+</head>
+<body>
+    
+
+
+<form action="/new" method="post">
+	<div>
+		{{#if error}}
+		<p class="err-msg">Username or password is incorrect</p>
+		{{/if }}
+		<h1>Login</h1>
+	</div>
+	<div class="form-group">
+		<label>Username: </label>
+		<input 
+			type="text" 
+			name="txtName" 
+			id="username" 
+			placeholder="Enter your username" 
+			required />
+	</div>
+	<div class="form-group">
+		<label>Password:</label>
+		<input 
+			type="password" 
+			name="txtPassword" 
+			id="password"
+			placeholder="Enter your password" 
+			required />
+	</div>
+    <div class="form-group">
+        Role <select name="role">
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+    </select>
+    </div>>
+	<div>
+		<input type="submit" value="register" />
+	</div>
+	NOT REGISTER COMBACK <a href="/login">HERE</a>
+</form>
+</body>

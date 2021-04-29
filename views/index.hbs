@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>LocPoShop</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>    
+
+    /* Remove the jumbotron's default bottom margin */
+    .jumbotron {
+      margin-bottom: 0;
+    }
+    /* Remove the navbar's default margin-bottom and rounded borders */
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+
+    .carousel-inner img {
+      width: 80%;
+      /* Set width to 100% */
+      margin: auto;
+      min-height: 200px;
+    }
+
+    /* Hide the carousel text when the screen is less than 600 pixels wide */
+    @media (max-width: 600px) {
+      .carousel-caption {
+        display: none;
+      }
+    }
+    .pageCenter {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1000px;
+	float: none;
+}
+
+.container {
+	text-align: center;
+	border: 1px solid green;
+	padding: 5px;
+}
+.container table {
+	border: 1px solid red;        
+	/* You can also uncomment this and remove the align="center" attribute    
+		margin: 0 auto;
+	*/
+}
+  </style>
+</head>
+
+<body>
+  <h1>Wellcome {{role}} {{name}}</h1>
+  <div class='mm'><nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/Moreabout">More about us</a></li>
+          <li><a href="/Cart">Cart</a></li>
+
+          <li><a href="/login">Log out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav></div>
+
+  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      <div class="item active">
+        <img src="https://theme.hstatic.net/1000160337/1000373353/14/psl_1_r1_slide_img_3.jpg?v=119" alt="Image">
+        <div class="carousel-caption">
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://theme.hstatic.net/1000160337/1000373353/14/psl_1_r1_slide_img_7.jpg?v=119" alt="Image">
+        <div class="carousel-caption">
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://theme.hstatic.net/1000160337/1000373353/14/psl_1_r1_slide_img_1.jpg?v=119" alt="Image">
+        <div class="carousel-caption">
+        </div>
+      </div>
+    </div>
+    <br><br><br><br><br><br>
+   <div class="container">
+     <table align="center" width="50%" border="1">
+        <tr>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Image</td>
+            <td>Number</td>
+            <td>Price</td>
+        </tr>
+        {{# each model}}
+        <tr>
+            <td>{{ID}}</td>
+            <td>{{Name}}</td>
+            <td><img src={{Image}} alt="img" class ="rounded" style="width: 200px; heiht: 200px; resize :both;"></td>
+            <td>{{Number}}</td>
+            <td>{{Price}}</td>
+        </tr>  
+        {{/each}}
+    </table></div>
+
+    <footer class="container-fluid text-center">
+    <span class="footer-copyright">Duong Duc Anh</span>
+  </footer>
+</body>
+
+</html>

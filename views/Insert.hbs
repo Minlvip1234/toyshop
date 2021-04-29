@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=11.0">
+    <title>New Product</title>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body class="d-flex align-items-center flex-column">
+    Wellcome {{role}} {{name}}
+    <form action="/doInsert" method="post">
+        Name     <br> <input type="text" name="txtName" id="">
+               <label for="" style="color:rgb(0, 110, 255);">{{model.nameError}}</label>
+        <br>
+        ID      <br>  <input type="text" name="txtID" id="">
+               
+               <label for="" style="color:rgba(0, 110, 255, 0.829);">{{model.mspError}}</label>
+        <br>
+        Image <br> <input type="text" name="txtImage" id="">
+        <br>
+        Number   <br>
+        <input type="text" name="txtNumber">
+        <br>
+        Price    <br>
+        <input type="text" name="txtPrice">
+        <input type="submit" value="Insert">
+    </form>
+    <p>IF NOT GO BACK <a href="/allproduct">HERE</a><p>
+</body>
+</html>
