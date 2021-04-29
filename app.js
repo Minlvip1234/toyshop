@@ -132,7 +132,7 @@ app.get('/Cart', async (req, res) => {
         res.render('Cart', { name: user.name, role: user.role, model: result })
     }
 })
-app.get('/insert', async (req, res) => {
+app.get('/Insert', async (req, res) => {
     var user = req.session.User;
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
@@ -143,7 +143,7 @@ app.get('/insert', async (req, res) => {
         if (!user || user.name == '') {
             res.render('notLogin', { message: 'user chua dang nhap' })
         } else {
-            res.render('insert', { name: user.name, role: user.role })
+            res.render('Insert', { name: user.name, role: user.role })
         }
     }
 
