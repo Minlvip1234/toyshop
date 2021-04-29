@@ -19,99 +19,99 @@ var url = "mongodb+srv://minh15:minh1507@cluster0.x1k9j.mongodb.net/test";
 const session = require('express-session');
 
 app.use(session({
-    resave: true, 
-    saveUninitialized: true, 
-    secret: 'some122$$%*$##!!#$%@#$%', 
-    cookie: { maxAge: 60000 }}));
+    resave: true,
+    saveUninitialized: true,
+    secret: 'some122$$%*$##!!#$%@#$%',
+    cookie: { maxAge: 60000 }
+}));
 
 
 var hbs = require('hbs')
-app.set('view engine','hbs')
+app.set('view engine', 'hbs')
 
 
 var bodyParser = require("body-parser");
 const cons = require('consolidate');
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get('/login',(req,res)=>{
+app.get('/login', (req, res) => {
     res.render('login')
 })
-app.get('/register',(req,res)=>{
+app.get('/register', (req, res) => {
     res.render('register')
 })
-app.get('/notLogin',(req,res)=>{
+app.get('/notLogin', (req, res) => {
     res.render('notLogin')
 })
-app.post('/new',async (req,res)=>{
+app.post('/new', async (req, res) => {
     var nameInput = req.body.txtName;
     var passInput = req.body.txtPassword;
     var roleInput = req.body.role;
-    var newUser = {name: nameInput, password:passInput,role:roleInput};
+    var newUser = { name: nameInput, password: passInput, role: roleInput };
 
-    let client= await MongoClient.connect(url);
+    let client = await MongoClient.connect(url);
     let dbo = client.db("toyshop");
     await dbo.collection("users").insertOne(newUser);
     res.redirect('/login')
 })
-app.post('/doLogin',async (req,res)=>{
+app.post('/doLogin', async (req, res) => {
     var nameInput = req.body.txtName;
     var passInput = req.body.txtPassword;
-    let client= await MongoClient.connect(url);
+    let client = await MongoClient.connect(url);
     let dbo = client.db("toyshop");
-    const cursor  = dbo.collection("users").
-        find({$and: [{name:nameInput},{password:passInput}]});
-    
+    const cursor = dbo.collection("users").
+        find({ $and: [{ name: nameInput }, { password: passInput }] });
+
     const count = await cursor.count();
-    
-    if (count== 0){
-        res.render('login',{message: 'Invalid user!'})
-    }else{
-        let name ='';
+
+    if (count == 0) {
+        res.render('login', { message: 'Invalid user!' })
+    } else {
+        let name = '';
         let role = ''
-        await cursor.forEach(doc=>{      
+        await cursor.forEach(doc => {
             name = doc.name;
-            role = doc.role;           
+            role = doc.role;
         })
         req.session.User = {
-            name : name,
-            role : role
+            name: name,
+            role: role
         }
-        if (role == 'admin')
-        {
-            res.redirect('/allproduct');
+        if (role == 'admin') {
+            res.redirect('/allProduct');
         }
-        else {res.redirect('/')}
-    }    
+        else { res.redirect('/') }
+    }
 })
 
-app.get('/allproduct',async (req,res)=>{
+app.get('/allProduct', async (req, res) => {
     var user = req.session.User;
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
     let results = await dbo.collection("products").find({}).sort({ Name: -1 }).toArray();
-    if(!user  || user.name == ''){
-        res.render('notLogin',{message:'user chua dang nhap'})
-    }else{
-        res.render('allproduct',{name: user.name,role:user.role,model:results})
+    if (!user || user.name == '') {
+        res.render('notLogin', { message: 'user chua dang nhap' })
+    } else {
+        res.render('allProduct', { name: user.name, role: user.role, model: results })
     }
 })
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-app.get('/', async(req, res) => {
+app.get('/', async (req, res) => {
     var user = req.session.User;
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
     let results = await dbo.collection("products").find({}).sort({ Name: -1 }).toArray();
-    if(!user  || user.name == ''){
-        res.render('notLogin',{message:'user chua dang nhap'})
-    }else{
-        res.render('index',{name: user.name,role:user.role,model:results})
+    if (!user || user.name == '') {
+        res.render('notLogin', { message: 'user chua dang nhap' })
+    } else {
+        res.render('index', { name: user.name, role: user.role, model: results })
     }
 })
 
 
-app.get('/delete', async(req, res) => {
+app.get('/delete', async (req, res) => {
     let inputId = req.query.id;
     let client = await MongoClient.connect(url);
     let dbo = client.db("toyshop");
@@ -121,32 +121,32 @@ app.get('/delete', async(req, res) => {
     res.redirect('/allProduct');
 })
 
-app.get('/Cart', async(req, res) => {
+app.get('/Cart', async (req, res) => {
     var user = req.session.User;
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
     let result = await dbo.collection("category").find({}).sort({ Name: -1 }).toArray();
-    if(!user  || user.name == ''){
-        res.render('notLogin',{message:'user chua dang nhap'})
-    }else{
-        res.render('Cart',{name: user.name,role:user.role,model:result})
+    if (!user || user.name == '') {
+        res.render('notLogin', { message: 'user chua dang nhap' })
+    } else {
+        res.render('Cart', { name: user.name, role: user.role, model: result })
     }
 })
 app.get('/insert', async (req, res) => {
     var user = req.session.User;
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
-    if (user.role == 'user')
-    {
+    if (user.role == 'user') {
         res.render('login')
     }
-    else{
-    if(!user  || user.name == ''){
-        res.render('notLogin',{message:'user chua dang nhap'})
-    }else{
-        res.render('insert',{name: user.name,role:user.role})
-    }}
-    
+    else {
+        if (!user || user.name == '') {
+            res.render('notLogin', { message: 'user chua dang nhap' })
+        } else {
+            res.render('insert', { name: user.name, role: user.role })
+        }
+    }
+
 })
 app.get('/Moreabout', (req, res) => {
     res.render('Moreabout.hbs');
@@ -157,7 +157,7 @@ app.get('/Contact', (req, res) => {
 app.get('/user', (req, res) => {
     res.render('user.hbs');
 })
-app.post('/doInsert', async(req, res) => {
+app.post('/doInsert', async (req, res) => {
     let inputName = req.body.txtName;
     let inputID = req.body.txtID;
     let inputImage = req.body.txtImage;
@@ -175,7 +175,7 @@ app.post('/doInsert', async(req, res) => {
     }
 })
 
-app.post('/doSearch', async(req, res) => {
+app.post('/doSearch', async (req, res) => {
     let inputName = req.body.txtName;
     let client = await MongoClient.connect(url);
     let dbo = client.db("toyshop");
@@ -194,7 +194,7 @@ app.get('/update', async (req, res) => {
     let results = await dbo.collection("products").find(condition).toArray();
     res.render('update', { model: results });
 })
-app.post('/doupdate', async(req, res) => {
+app.post('/doupdate', async (req, res) => {
     let id = req.body.id;
     var ObjectID = require('mongodb').ObjectID;
     let condition = { "_id": ObjectID(id) };
