@@ -10,7 +10,7 @@ app.set('views', './views');
 /////////////
 //mongodb
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017";
+var url = "mongodb+srv://minh15:minh1507@cluster0.x1k9j.mongodb.net/test";
 /////////////
 //session
 const session = require('express-session');
@@ -27,7 +27,6 @@ app.set('view engine', 'hbs')
 //////////////
 //bodyparser
 var bodyParser = require("body-parser");
-const cons = require('consolidate');
 app.use(bodyParser.urlencoded({ extended: false }))
 ///////////////
 
@@ -47,19 +46,19 @@ app.post('/new', async (req, res) => {
     var nameInput = req.body.txtName;
     var passInput = req.body.txtPassword;
     var roleInput = req.body.role;
-    
-    if (nameInput.trim().length < 8)
+    if (nameInput.trim().length >= 8 && passInput.trim().length >= 8  && isNumeric(nameInput) == false && isNumeric(passInput) == false)
     {
-        res.render('register', {nameerr: 'Username must be more than 8 character'})
+        var newUser = { name: nameInput, password: passInput, role: roleInput };
+        let client = await MongoClient.connect(url);
+        let dbo = client.db("toyshop");
+        await dbo.collection("users").insertOne(newUser);
+        res.redirect('/login')
     }
     else
-    {
-            var newUser = { name: nameInput, password: passInput, role: roleInput };
-            let client = await MongoClient.connect(url);
-            let dbo = client.db("toyshop");
-            await dbo.collection("users").insertOne(newUser);
-            res.redirect('/login')
-     }
+    {      
+        res.render('register', {nameerr: 'Username and password must be more than 8 character, username and password can not only have number'})
+
+    }
 })
 //////////////////////////
 //login
@@ -101,10 +100,17 @@ app.get('/allProduct', async (req, res) => {
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
     let results = await dbo.collection("products").find({}).sort({ Name: -1 }).toArray();
-    if (!user || user.name == '') {
-        res.render('notLogin', { message: 'user chua dang nhap' })
-    } else {
-        res.render('allProduct', { name: user.name, role: user.role, model: results })
+    if (user.role == 'user')
+    {
+        res.render('login')
+    }
+    else
+    {
+        if (!user || user.name == '') {
+            res.render('notLogin', { message: 'user chua dang nhap' })
+        } else {
+            res.render('allProduct', { name: user.name, role: user.role, model: results })
+        }
     }
 })
 
@@ -124,18 +130,14 @@ app.get('/', async (req, res) => {
 //////////////////////////////////
 //delete function
 app.get('/delete', async (req, res) => {
+    var user = req.session.User;
     let inputId = req.query.id;
     let client = await MongoClient.connect(url);
     let dbo = client.db("toyshop");
     var ObjectID = require('mongodb').ObjectID;
     let condition = { "_id": ObjectID(inputId) };
     await dbo.collection("products").deleteOne(condition);
-    res.redirect('/allProduct');
-})
-/////////////////
-//Cart page
-app.get('/Cart', async (req, res) => {
-    res.render('Cart')
+    res.redirect('/allProduct', {name: user.name, role: user.role});
 })
 
 /////////////////
@@ -157,20 +159,35 @@ app.get('/Insert', async (req, res) => {
 })
 //insert function
 app.post('/doInsert', async (req, res) => {
+    var user = req.session.User;
+    let client = await MongoClient.connect(url, { useUnifiedTopology: true });
+    let dbo = client.db("toyshop");
     let inputName = req.body.txtName;
     let inputID = req.body.txtID;
     let inputImage = req.body.txtImage;
     let inputNumber = req.body.txtNumber;
     let inputPrice = req.body.txtPrice;
-    let newProduct = { Name: inputName, ID: inputID, Image: inputImage, Number: inputNumber, Price: inputPrice };
-    if (inputName.trim().length == 0) {
-        let modelError = { nameError: "Invalid Name", mspError: "Invalid ID" };
-        res.render('Insert.hbs', { model: modelError });
-    } else {
-        let client = await MongoClient.connect(url);
-        let dbo = client.db("toyshop");
-        await dbo.collection("products").insertOne(newProduct);
-        res.redirect('/allProduct');
+    if (isNumeric(inputName) == false && isNumeric(inputID) == true && isNumeric(inputPrice) == true && isNumeric(inputNumber) == true && inputNumber.trim().length == 9)
+    {
+        let newProduct = { Name: inputName, ID: inputID, Image: inputImage, Number: "+84 \t" + inputNumber, Price: inputPrice };
+        if (inputName.trim().length == 0) {
+            let modelError = { nameError: "Invalid Name", mspError: "Invalid ID" };
+            res.render('Insert.hbs', { model: modelError });
+        } else {
+            let client = await MongoClient.connect(url);
+            let dbo = client.db("toyshop");
+            await dbo.collection("products").insertOne(newProduct);
+            res.redirect('/allProduct');
+        }
+    }
+    else
+    {
+        res.render('insert',  
+        { 
+            name: user.name, 
+            role: user.role,
+            logerr: 'Name must be numbers and characters, ID must be a number, phone of Number must be 9 numbers and price must be a number' 
+        })
     }
 })
 ///////////////////////
@@ -183,19 +200,11 @@ app.post('/doSearch', async (req, res) => {
     res.render('allProduct', { model: results });
 
 })
-///////////////////////
-//some other page
-app.get('/Moreabout', (req, res) => {
-    res.render('Moreabout.hbs');
-})
-app.get('/Contact', (req, res) => {
-    res.render('Contact.hbs');
-})
+
 ///////////////////////
 //update page
 app.get('/update', async (req, res) => {
     let id = req.query.id;
-    console.log(id)
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
     var ObjectID = require('mongodb').ObjectID;
@@ -208,7 +217,6 @@ app.post('/doupdate', async (req, res) => {
     let id = req.body.id;
     var ObjectID = require('mongodb').ObjectID;
     let condition = { "_id": ObjectID(id) };
-    console.log(condition)
     let client = await MongoClient.connect(url, { useUnifiedTopology: true });
     let dbo = client.db("toyshop");
     change = {
@@ -223,6 +231,66 @@ app.post('/doupdate', async (req, res) => {
     res.redirect('/allProduct');
 })
 //////////////////
+function isNumeric(str) {
+    if (typeof str != "string") return false // we only process strings!  
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+           !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+/////////////////
+//mangament user page
+app.get('/changePasswordUser', async (req, res) => {
+    var user = req.session.User;    
+    let id = req.body.id;
+    let client = await MongoClient.connect(url, { useUnifiedTopology: true });
+    let dbo = client.db("toyshop");
+    if (!user || user.name == '') {
+        res.render('notLogin', { message: 'user chua dang nhap' })
+    } else {
+        if (user.role == 'user')
+        {
+            res.render('login')
+        }
+        else{
+        let results = await dbo.collection("users").find({}).toArray();
+        res.render('changePasswordUser', {name: user.name, role: user.role, model: results});
+    }}
+    
+})
+
+//////////////////
+//delete user
+app.get('/deletee', async (req, res) => {
+    var user = req.session.User;   
+    let inputId = req.query.id;
+    let client = await MongoClient.connect(url);
+    let dbo = client.db("toyshop");
+    var ObjectID = require('mongodb').ObjectID;
+    let condition = { "_id": ObjectID(inputId) };
+    await dbo.collection("users").deleteOne(condition);
+    console.log(user.role);
+    res.redirect('/allProduct');
+})
+
+//app.post('/doupdateuser', async (req, res) => {
+    //var user = req.session.User;    
+    //let inputId = req.query.id;
+    //let client = await MongoClient.connect(url);
+    //let dbo = client.db("toyshop");
+    //var ObjectID = require('mongodb').ObjectID;
+    //let condition = { "_id": ObjectID(inputId) };
+    //let nameuser = user.name;
+    //let passworduser = user.password;
+    //console.log(user.name, user.role)
+    //change = {
+        //$set: {
+            //this -> name: req.body.txtNameUser,
+            //this -> password: req.body.txtPasswordUser
+      //  }
+    //}
+    //await dbo.collection("users").updateOne(condition, change);
+    //res.redirect('/changePasswordUser');
+//})
+
 
 //run server
 const PORT = process.env.PORT || 5000
