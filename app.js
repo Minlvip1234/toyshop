@@ -10,7 +10,7 @@ app.set('views', './views');
 /////////////
 //mongodb
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017";
+var url = "mongodb+srv://minh15:minh1507@cluster0.x1k9j.mongodb.net/test";
 /////////////
 //session
 const session = require('express-session');
