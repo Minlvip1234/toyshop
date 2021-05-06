@@ -10,7 +10,7 @@ app.set('views', './views');
 /////////////
 //mongodb
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://minh15:minh1507@cluster0.x1k9j.mongodb.net/test";
+var url = "mongodb://localhost:27017";
 /////////////
 //session
 const session = require('express-session');
@@ -130,14 +130,13 @@ app.get('/', async (req, res) => {
 //////////////////////////////////
 //delete function
 app.get('/delete', async (req, res) => {
-    var user = req.session.User;
     let inputId = req.query.id;
     let client = await MongoClient.connect(url);
     let dbo = client.db("toyshop");
     var ObjectID = require('mongodb').ObjectID;
     let condition = { "_id": ObjectID(inputId) };
     await dbo.collection("products").deleteOne(condition);
-    res.redirect('/allProduct', {name: user.name, role: user.role});
+    res.redirect('/allProduct');
 })
 
 /////////////////
